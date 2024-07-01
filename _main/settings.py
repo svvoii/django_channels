@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+	'channels',
 ]
 
 MIDDLEWARE = [
@@ -70,6 +71,18 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = '_main.wsgi.application'
+
+ASGI_APPLICATION = '_main.routing.application'
+
+# Configuration for using Redis with Django Channels
+CHANNEL_LAYERS = {
+	'default': {
+		'BACKEND': 'channels_redis.core.RedisChannelLayer',
+		'CONFIG': {
+			"hosts": [('127.0.0.1', 6379)],
+	},
+	},
+}
 
 
 # Database

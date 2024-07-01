@@ -138,6 +138,8 @@ python manage.py migrate
 
 9. Register the models in the Django admin
 
+*This will allow to see and manage these models in the Django admin*  
+
 *In the `_public_chat/admin.py` file*:  
 
 ```python
@@ -214,4 +216,74 @@ python manage.py runserver
 12. Open the Django admin in the browser and login with the superuser credentials
 
 *At this point the database models are created and can be managed in the Django admin. The database tables are empty and can be populated with data once frontend views are created*    
+
+
+# ***DJANGO CHANNELS***
+
+1. Install Django Channels
+
+**NOTE:** *For more information on Django Channels visit the official documentation: [here](https://channels.readthedocs.io/en/latest/installation.html)  
+
+```bash
+pipenv install channels
+```
+
+2. Add the `channels` to the `INSTALLED_APPS` in the `settings.py` file
+
+```python
+INSTALLED_APPS = [
+	...
+	'channels',
+]
+```
+
+3. Add the `ASGI_APPLICATION` in the `settings.py` file
+
+```python
+ASGI_APPLICATION = '_main.routing.application'
+```
+
+4. Create a new file `routing.py` in the `_main` directory
+
+*This file will contain the routing configuration for the Django Channels*  
+
+*In the `_main/routing.py` file*:  
+
+```python
+from channels.auth import AuthMiddlewareStack
+from channels.routing import ProtocolTypeRouter, URLRouter
+from channels.security.websocket import AllowedHostsOriginValidator
+from django.urls import path
+
+
+application = ProtocolTypeRouter({
+	# (http->django views is added by default)
+	'websocket': AllowedHostsOriginValidator(
+		AuthMiddlewareStack(
+
+			# URLRouter([...]) # This is the routing configuration for the chat app
+		)
+	),
+})
+```
+
+5. Adding he following setting to the `settings.py` file to use redis as the channel layer
+
+*In the `settings.py` file*:  
+
+```python
+# Configuration for using Redis with Django Channels
+CHANNEL_LAYERS = {
+	'default': {
+		'BACKEND': 'channels_redis.core.RedisChannelLayer',
+		'CONFIG': {
+			"hosts": [('127.0.0.1', 6379)],
+	},
+	},
+}
+```
+
+...
+
+**NOTE:** *THIS PART OF SETTING UP DJANGO CHANNELS IS NOT COMPLETE YET. THE REST OF THE STEPS WILL BE ADDED LATER*  
 
